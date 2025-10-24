@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/DistributionListAutomation/static/css/main.e6493ad6.css",
+    "main.js": "/DistributionListAutomation/static/js/main.e8f51c89.js",
+    "static/js/453.c3db55c9.chunk.js": "/DistributionListAutomation/static/js/453.c3db55c9.chunk.js",
+    "index.html": "/DistributionListAutomation/index.html",
+    "main.e6493ad6.css.map": "/DistributionListAutomation/static/css/main.e6493ad6.css.map",
+    "main.e8f51c89.js.map": "/DistributionListAutomation/static/js/main.e8f51c89.js.map",
+    "453.c3db55c9.chunk.js.map": "/DistributionListAutomation/static/js/453.c3db55c9.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6493ad6.css",
+    "static/js/main.e8f51c89.js"
+  ]
+}
