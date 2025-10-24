@@ -496,7 +496,9 @@ const handleExportClick = () => {
             <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 mb-2">User Management</h3>
             <p className="text-gray-600 mb-4">View and manage Azure AD users synced to distribution lists</p>
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button 
+
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
               Sync Users from Azure AD
             </button>
           </div>
@@ -693,7 +695,6 @@ const handleExportClick = () => {
     </div>
   </div>
 )}
-
       {selectedDL && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
