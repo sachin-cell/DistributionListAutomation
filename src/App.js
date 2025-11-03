@@ -731,7 +731,7 @@ const handleExportClick = () => {
                 </div>
 
                 <div className="flex items-center space-x-2 pt-4 border-t border-gray-200">
-                  <button 
+                  {/* <button 
                     onClick={(e) => {
                       e.preventDefault();
                       console.log('Bulk Import button clicked!');
@@ -741,7 +741,7 @@ const handleExportClick = () => {
                   >
                     <Upload className="w-4 h-4" />
                     <span>Bulk Import</span>
-                  </button>
+                  </button> */}
                   
                   <button 
                     onClick={(e) => {
