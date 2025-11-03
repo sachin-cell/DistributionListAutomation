@@ -84,14 +84,54 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDL, setSelectedDL] = useState(null);
-  const [showAddModal, setShowAddModal] = useState(false);
   const [showRuleModal, setShowRuleModal] = useState(false);
   const [activeSection, setActiveSection] = useState("");
+  // use existing mockDistributionLists as initial data so grid is prefilled
+const [distributionLists, setDistributionLists] = useState(mockDistributionLists);
 
-  const filteredDLs = mockDistributionLists.filter(dl =>
-    dl.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    dl.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+// Modal visibility already exists, keep it
+const [showAddModal, setShowAddModal] = useState(false);
+
+// Bind modal input fields (no UI change to the modal markup — just track values)
+const [newDLName, setNewDLName] = useState("");
+const [newDLEmail, setNewDLEmail] = useState("");
+const [newDLDepartment, setNewDLDepartment] = useState("");
+const [newDLDescription, setNewDLDescription] = useState("");
+
+  const filteredDLs = distributionLists.filter(dl =>
+  dl.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  dl.email.toLowerCase().includes(searchTerm.toLowerCase())
+);
+const handleCreateDL = () => {
+  // basic validation
+  if (!newDLName.trim()) {
+    // Optionally show an alert/toast — keeping minimal here
+    return;
+  }
+
+  const newDL = {
+    id: Date.now(), // simple unique id
+    name: newDLName.trim(),
+    email: newDLEmail.trim() || `${newDLName.trim().toLowerCase().replace(/\s+/g,'-')}@company.com`,
+    members: 0,
+    region: "", // you can set defaults or add more fields
+    department: newDLDepartment.trim(),
+    jobProfile: "",
+    admins: [],
+    lastSync: 'Just now',
+    description: newDLDescription.trim(),
+  };
+
+  setDistributionLists(prev => [...prev, newDL]);
+
+  // reset modal state and close
+  setNewDLName("");
+  setNewDLEmail("");
+  setNewDLDepartment("");
+  setNewDLDescription("");
+  setShowAddModal(false);
+};
+
 const [activeActivityTab, setActiveActivityTab] = useState('activity');
 const dataToShow = activeActivityTab === 'activity' ? mockRecentActivity : mockErrors;
   const [showMapper, setShowMapper] = useState(false);
@@ -137,6 +177,20 @@ const handleExportClick = () => {
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'DistributionLists');
   XLSX.writeFile(wb, 'DistributionLists.xlsx');
+};
+// State to hold DL members
+const [currentMembers, setCurrentMembers] = useState([
+  { name: "User 1", email: "user1@company.com" },
+  { name: "User 2", email: "user2@company.com" },
+  { name: "User 3", email: "user3@company.com" },
+  { name: "User 4", email: "user4@company.com" },
+  { name: "User 5", email: "user5@company.com" },
+  { name: "User 6", email: "user6@company.com" },
+  { name: "User 7", email: "user7@company.com" },
+  { name: "User 8", email: "user8@company.com" },
+]);
+const handleRemoveMember = (email) => {
+  setCurrentMembers(prev => prev.filter(member => member.email !== email));
 };
 
   const handleImportClick = () => {
@@ -512,24 +566,52 @@ const handleExportClick = () => {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                <input type="text" className="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="e.g., Product Team" />
+<input
+  type="text"
+  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+  placeholder="e.g., Product Team"
+  value={newDLName}
+  onChange={(e) => setNewDLName(e.target.value)}
+/>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                <input type="email" className="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="e.g., product@company.com" />
+<input
+  type="email"
+  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+  placeholder="e.g., product@company.com"
+  value={newDLEmail}
+  onChange={(e) => setNewDLEmail(e.target.value)}
+/>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
-                <input type="text" className="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="e.g., Product" />
+                <input
+  type="text"
+  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+  placeholder="e.g., Product"
+  value={newDLDepartment}
+  onChange={(e) => setNewDLDepartment(e.target.value)}
+/>
+
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                <textarea className="w-full px-3 py-2 border border-gray-300 rounded-lg" rows="3" placeholder="Optional description..."></textarea>
+<textarea
+  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+  rows="3"
+  placeholder="Optional description..."
+  value={newDLDescription}
+  onChange={(e) => setNewDLDescription(e.target.value)}
+></textarea>
               </div>
             </div>
             <div className="flex items-center justify-end space-x-3 mt-6">
               <button onClick={() => setShowAddModal(false)} className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
-              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Create DL</button>
+              <button onClick={handleCreateDL} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+  Create DL
+</button>
+
             </div>
           </div>
         </div>
@@ -705,29 +787,31 @@ const handleExportClick = () => {
             <div className="p-6 overflow-y-auto flex-1">
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Add Members</label>
-                  <div className="flex space-x-2">
-                    <input type="text" placeholder="Search users..." className="flex-1 px-3 py-2 border border-gray-300 rounded-lg" />
-                    <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Add</button>
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Current Members ({selectedDL.members})</label>
-                  <div className="border border-gray-200 rounded-lg divide-y divide-gray-200 max-h-64 overflow-y-auto">
-                    {[...Array(8)].map((_, i) => (
-                      <div key={i} className="px-4 py-3 flex items-center justify-between hover:bg-gray-50">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
-                          <div>
-                            <p className="text-sm font-medium text-gray-900">User {i + 1}</p>
-                            <p className="text-xs text-gray-500">user{i + 1}@company.com</p>
-                          </div>
-                        </div>
-                        <button className="text-red-600 hover:text-red-800 text-sm">Remove</button>
-                      </div>
-                    ))}
-                  </div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+  Current Members ({currentMembers.length})
+</label>
+
+<div className="border border-gray-200 rounded-lg divide-y divide-gray-200 max-h-64 overflow-y-auto">
+  {currentMembers.map((member, i) => (
+    <div key={member.email} className="px-4 py-3 flex items-center justify-between hover:bg-gray-50">
+      <div className="flex items-center space-x-3">
+        <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+        <div>
+          <p className="text-sm font-medium text-gray-900">{member.name}</p>
+          <p className="text-xs text-gray-500">{member.email}</p>
+        </div>
+      </div>
+
+      <button
+        onClick={() => handleRemoveMember(member.email)}
+        className="text-red-600 hover:text-red-800 text-sm"
+      >
+        Remove
+      </button>
+    </div>
+  ))}
+</div>
+
                 </div>
 
                 <div className="flex items-center space-x-2 pt-4 border-t border-gray-200">
@@ -830,3 +914,4 @@ const handleExportClick = () => {
     </div>
   );
 }
+
